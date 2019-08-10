@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" class="x-admin-sm" xmlns:th="http://www.thymeleaf.org" xmlns:align="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>国风社区</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<style type="text/css">
+    .laytable-cell-1-0-4{
+        height:80px;
+        line-height: 80px;
+    }
+    .laytable-cell-1-0-4 img{
+        height:80px;
+    }
+    .laytable-cell-1-0-3{
+        height:80px;
+        line-height: 80px;
+    }
+    .laytable-cell-1-0-3 img{
+        width: 120px;
+        height:80px;
+        max-width: 120px;
+    }
+    .laytable-cell-1-0-10{
+        height:80px;
+    }
+    .laytable-cell-1-0-10 textarea{
+        height:90px;
+        width: 170px;
+    }
+</style>
+<body>
+<div class="layui-card-header">
+    <button class="layui-btn" onclick="xadmin.open('添加活动','/activity/addactivity')"><i class="layui-icon"></i>发布活动</button>
+</div>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<script>
+    layui.use('table', function(){
+
+
+        var table=layui.table;
+        table.render({
+            elem: '#test'
+            , url: '/activity/getActivity'
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , totalRow: true
+            , loading: true
+            , title: "活动列表"
+            , even: true //开启隔行背景
+            , cols: [
+                [
+                    {field: 'id', title: 'ID', sort: true}
+                    , {field: 'activityTitle', title: '活动标题'}
+                    , {field: 'activityCover', title: '封面图'}
+                    , {field: 'startTime',title: '活动开始时间'}
+                    , {field: 'endTime',title: '活动结束时间'}
+                    , {field: 'createTime',title: '创建时间'}
+                    , {field: 'updateTime',title: '更新时间'}
+                    , {field: 'isDelete',title: '状态',templet:'#isDelete'}
+                    , {fixed: 'right',title: '操作', align:'center', toolbar: '#barDemo'}
+                ]
+            ], page: true
+        });
+
+
+        //监听行工具事件
+        table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+            if(layEvent === 'forbid'){
+                layer.confirm('确定禁用该用户吗?', {icon: 3, title:'提示'}, function(index){
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: "/activity/forbid/"+data.id ,
+                        success: function(msg){
+                            layer.msg(msg.message, {time: 2000},function(){
+                                layer.close(index);
+                                window.location.reload();
+                            });
+                        }
+                    });
+                });
+            } else if(layEvent === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: "/activity/delete/"+data.id,
+                        success: function(msg){
+                            layer.msg(msg.message, {time: 2000},function(){
+                                layer.close(index);
+                                window.location.reload();
+                            });
+                        }
+                    });
+                });
+            } else if(layEvent === 'activate'){
+                layer.confirm('确定激活该用户吗?', {icon: 3, title:'提示'}, function(index){
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: "/activity/activate/"+data.id ,
+                        success: function(msg){
+                            layer.msg(msg.message, {time: 2000},function(){
+                                layer.close(index);
+                                window.location.reload();
+                            });
+                        }
+                    });
+                });
+            }
+        });
+
+
+    });
+
+
+</script>
+<script type="text/html" id="barDemo">
+    <a lay-event="del" title="删除"  href="javascript:;">
+        <i class="layui-icon">&#xe640;</i>
+    </a>
+    <a lay-event="forbid" title="禁用"   href="javascript:;">
+        <i class="icon iconfont">&#xe69a;</i>
+    </a>
+    <a lay-event="activate" title="激活"  href="javascript:;">
+        <i class="icon iconfont">&#xe6ad;</i>
+    </a>
+</script>
+<script type="text/html" id="isDelete">
+                  {{#  if(d.isDelete === 0){ }}
+    <span  class="layui-btn layui-btn-normal layui-btn-mini">已启用</span>
+                
+                  {{#  } else { }}
+
+                        <span  class="layui-btn-disabled layui-btn layui-btn-normal layui-btn-mini">已停用</span>
+
+                  {{#  } }}
+</script>
+
+</body>
+</html>

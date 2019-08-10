@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xingyun.national.mapper.UserMapper">
+    <resultMap id="UserResultMap" type="com.xingyun.national.dto.Userdto">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="open_id" property="openId" jdbcType="BIGINT"/>
+        <result column="rank_name" property="rankName" jdbcType="VARCHAR"/>
+        <result column="medal_name" property="medalName" jdbcType="VARCHAR" />
+        <result column="nick_name" property="nickName" jdbcType="VARCHAR"/>
+        <result column="avatar_url" property="avatarUrl" jdbcType="VARCHAR"/>
+        <result column="signature" property="signature" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" jdbcType="INTEGER"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="country" property="country" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="role" property="role" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="findAllUser" resultMap="UserResultMap" parameterType="map">
+SELECT
+	u.id AS id,
+	u.open_id AS open_id,
+	r.rank_name AS rank_name,
+	m.medal_name AS medal_name,
+	u.nick_name AS nick_name,
+	u.avatar_url AS avatar_url,
+	u.signature AS signature,
+	u.gender AS gender,
+	u.province AS province,
+	u.city AS city,
+	u.country AS country,
+	u.phone AS phone,
+	u.STATUS AS status,
+	u.role AS role,
+	DATE_FORMAT(u.create_time,'%Y-%m-%d %H:%i:%s') AS create_time,
+	DATE_FORMAT(u.update_time,'%Y-%m-%d %H:%i:%s') AS update_time
+FROM
+	USER u
+	LEFT JOIN rank r ON u.rank_id = r.rank
+	LEFT JOIN medal m ON u.medal_id = m.medal
+    </select>
+
+
+</mapper>

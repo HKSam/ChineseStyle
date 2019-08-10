@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xingyun.national.mapper.UserVipInfoMapper">
+    <resultMap id="VipResultMap" type="com.xingyun.national.dto.Vipdto">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="vip_kind_name" property="vipKindName" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="findVip" resultMap="VipResultMap" parameterType="map">
+        SELECT
+	u.id AS id,
+	u.user_id AS user_id,
+	r.vip_kind_name AS vip_kind_name,
+	u.start_time AS start_time,
+	u.end_time AS end_time,
+	u.`status` AS `status`
+FROM
+	user_vip_info u
+	LEFT JOIN vip_kind r ON u.kind_vid = r.id
+
+    </select>
+</mapper>
